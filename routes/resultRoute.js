@@ -44,4 +44,30 @@ router.post("/", async (req, res) => {
   }
 });
 
+// ==============================
+// POST /api/results/check → query results by rollNo, term, session
+// ==============================
+router.post("/check", async (req, res) => {
+  try {
+    const { rollNo, term, session } = req.body;
+    if (!rollNo || !term || !session) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+
+    const db = getDB();
+    const results = await db
+      .collection("results")
+      .find({ rollNo, term, session })
+      .toArray();
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No results found" });
+    }
+
+    res.json({ success: true, results });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 export default router;
