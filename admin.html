@@ -146,12 +146,16 @@
   </div>
 </section>
 <script>
-const hamburger=document.getElementById('hamburger');
-const navLinks=document.getElementById('navLinks');
-hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active');navLinks.classList.toggle('active');});
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
 
-function showSection(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  navLinks.classList.toggle('active');
+});
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   navLinks.classList.remove('active');
   hamburger.classList.remove('active');
@@ -160,7 +164,7 @@ function showSection(id){
 // ============================
 // CONNECT FRONTEND TO BACKEND
 // ============================
-const API_URL = "https://bps-qgmn.onrender.com"; 
+const API_URL = "https://bps-qgmn.onrender.com";
 
 let allStudents = [];
 let allTeachers = [];
@@ -168,34 +172,34 @@ let allTeachers = [];
 // ============================
 // FETCH ADMIN STUDENTS
 // ============================
-async function fetchStudents(){
+async function fetchStudents() {
   try {
     const res = await fetch(`${API_URL}/api/admin/students`);
     const data = await res.json();
     allStudents = data;
     renderStudents(data);
-  } catch(err){
+  } catch (err) {
     console.error(err);
   }
 }
 
-function renderStudents(list){
-  let tbody = document.getElementById('studentsBody');
+function renderStudents(list) {
+  const tbody = document.getElementById('studentsBody');
   tbody.innerHTML = '';
-  list.forEach(std=>{
+  list.forEach(std => {
     tbody.innerHTML += `
       <tr>
-        <td style='padding:10px;border:1px solid #ddd;'>${std.studentId}</td>
-        <td style='padding:10px;border:1px solid #ddd;'>${std.fullName}</td>
-        <td style='padding:10px;border:1px solid #ddd;'>${std.studentClass || '-'}</td>
+        <td style="padding:10px;border:1px solid #ddd;">${std.studentId}</td>
+        <td style="padding:10px;border:1px solid #ddd;">${std.fullName}</td>
+        <td style="padding:10px;border:1px solid #ddd;">${std.studentClass || '-'}</td>
       </tr>
     `;
   });
 }
 
-function filterByClass(){
+function filterByClass() {
   const selected = document.getElementById('classFilter').value;
-  if(selected === 'all') return renderStudents(allStudents);
+  if (selected === 'all') return renderStudents(allStudents);
 
   renderStudents(allStudents.filter(std => 
     (std.studentClass || '').toLowerCase() === selected.toLowerCase()
@@ -205,183 +209,121 @@ function filterByClass(){
 // ============================
 // REGISTER STUDENT (ADMIN)
 // ============================
-document.getElementById('registrationForm').addEventListener('submit', async e=>{
-  e.preventDefault();
-  const form = e.target;
+const registrationForm = document.getElementById('registrationForm');
+if (registrationForm) {
+  registrationForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
 
-  const data = {
-    fullName: form.fullName.value,
-    studentId: form.studentId.value,
-    dateOfBirth: form.dateOfBirth.value,
-    nationality: form.nationality.value,
-    parentName: form.parentName.value,
-    parentPhone: form.parentPhone.value,
-    guardianName: form.guardianName.value,
-    guardianPhone: form.guardianPhone.value,
-    lga: form.lga.value,
-    studentClass: "Not Assigned" // initial default
-  };
+    const data = {
+      fullName: form.fullName.value,
+      studentId: form.studentId.value,
+      dateOfBirth: form.dateOfBirth.value,
+      nationality: form.nationality.value,
+      parentName: form.parentName.value,
+      parentPhone: form.parentPhone.value,
+      guardianName: form.guardianName.value,
+      guardianPhone: form.guardianPhone.value,
+      lga: form.lga.value,
+      studentClass: "Not Assigned"
+    };
 
-  try {
-    const res = await fetch(`${API_URL}/api/admin/students`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(data)
-    });
+    try {
+      const res = await fetch(`${API_URL}/api/admin/students`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(data)
+      });
 
-    const result = await res.json();
-
-    if(result.success){
-      alert("Student Registered Successfully!");
-      form.reset();
-      fetchStudents();
-    } else {
-      alert("Error: " + (result.message || result.error));
+      const result = await res.json();
+      if (result.success) {
+        alert("Student Registered Successfully!");
+        form.reset();
+        fetchStudents();
+      } else {
+        alert("Error: " + (result.message || result.error));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to connect to server.");
     }
-  } catch(err){
-    console.error(err);
-    alert("Failed to connect to server.");
-  }
-});
+  });
+}
 
 // ============================
-// ADD RESULT
+// ADD TEACHER
 // ============================
-document.getElementById("resultForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const form = e.target;
+const teacherForm = document.getElementById('teacherForm');
+if (teacherForm) {
+  teacherForm.addEventListener('submit', async e => {
+    e.preventDefault();
 
-  const data = {
-    rollNo: form.studentId.value,
-    subject: form.subject.value,
-    score: form.score.value,
-    term: form.term.value,
-    session: form.session.value
-  };
+    const data = {
+      fullName: e.target.fullName.value,
+      phone: e.target.phone.value,
+      email: e.target.email.value,
+      qualification: e.target.qualification.value,
+      subjectSpecialization: e.target.subjectSpecialization.value,
+      classTeacher: e.target.classTeacher.value,
+      yearsOfExperience: e.target.yearsOfExperience.value,
+      joiningDate: e.target.joiningDate.value
+    };
 
-  try {
-    const res = await fetch(`${API_URL}/api/results`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(data)
-    });
+    try {
+      const res = await fetch(`${API_URL}/api/teachers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-    const result = await res.json();
-
-    if(result.success || result.insertedId){
-      alert("Result Saved Successfully!");
-      form.reset();
-    } else {
-      alert("Error: " + (result.message || result.error));
+      const result = await res.json();
+      if (result.success) {
+        alert('Teacher added successfully!');
+        e.target.reset();
+        fetchTeachers();
+      } else {
+        alert('Error: ' + (result.message || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to connect to server.');
     }
-  } catch(err){
-    console.error(err);
-    alert("Failed to connect to server.");
-  }
-});
-
-// ============================
-// TRANSFER STUDENTS
-// ============================
-document.getElementById('transferForm').addEventListener('submit', async e=>{
-  e.preventDefault();
-
-  const currentClass = document.getElementById('currentClass').value;
-  const newClass = document.getElementById('newClass').value;
-
-  if(!currentClass || !newClass){
-    return alert("Please select both classes.");
-  }
-
-  try {
-    const res = await fetch(`${API_URL}/api/admin/students/transfer-class`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ currentClass, newClass })
-    });
-
-    const result = await res.json();
-
-    if(result.success){
-      alert("Students transferred successfully!");
-      fetchStudents();
-    } else {
-      alert("Error: " + (result.error || result.message));
-    }
-  } catch(err){
-    alert("Failed to connect to server.");
-  }
-});
-
-// ============================
-// TEACHER: ADD
-// ============================
-document.getElementById('teacherForm').addEventListener('submit', async e => {
-  e.preventDefault();
-
-  const data = {
-    fullName: e.target.fullName.value,
-    phone: e.target.phone.value,
-    email: e.target.email.value,
-    qualification: e.target.qualification.value,
-    subjectSpecialization: e.target.subjectSpecialization.value,
-    classTeacher: e.target.classTeacher.value,
-    yearsOfExperience: e.target.yearsOfExperience.value,
-    joiningDate: e.target.joiningDate.value
-  };
-
-  try {
-    const res = await fetch(`${API_URL}/api/teachers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-
-    const result = await res.json();
-    if (result.success) {
-      alert('Teacher added successfully!');
-      e.target.reset();
-      fetchTeachers(); // refresh the teachers table
-    } else {
-      alert('Error: ' + (result.message || 'Unknown error'));
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Failed to connect to server.');
-  }
-});
+  });
+}
 
 // ============================
 // FETCH TEACHERS
 // ============================
-async function fetchTeachers(){
+async function fetchTeachers() {
   try {
     const res = await fetch(`${API_URL}/api/teachers`);
     const data = await res.json();
     allTeachers = data;
     renderTeachers(data);
-  } catch(err){
+  } catch (err) {
     console.error(err);
   }
 }
 
-function renderTeachers(list){
-  let tbody = document.getElementById('teachersBody');
+function renderTeachers(list) {
+  const tbody = document.getElementById('teachersBody');
   tbody.innerHTML = '';
-  list.forEach(t=>{
+  list.forEach(t => {
     tbody.innerHTML += `
       <tr>
-        <td style='padding:10px;border:1px solid #ddd;'>${t.teacherId}</td>
-        <td style='padding:10px;border:1px solid #ddd;'>${t.fullName}</td>
-        <td style='padding:10px;border:1px solid #ddd;'>${t.classes}</td>
+        <td style="padding:10px;border:1px solid #ddd;">${t.teacherId || '-'}</td>
+        <td style="padding:10px;border:1px solid #ddd;">${t.fullName}</td>
+        <td style="padding:10px;border:1px solid #ddd;">${t.classes || '-'}</td>
       </tr>
     `;
   });
 }
 
+// ============================
 // INITIAL LOAD
+// ============================
 fetchStudents();
 fetchTeachers();
-</script>
+  </script>
 </body>
 </html>
