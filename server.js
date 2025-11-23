@@ -1,10 +1,15 @@
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js"; // updated path
+import { connectDB } from "./config/db.js";
 
-import studentRoute from "./routes/studentRoute.js"; // updated path
-import resultRoute from "./routes/resultRoute.js";   // updated path
+import studentRoute from "./routes/studentRoute.js";
+import resultRoute from "./routes/resultRoute.js";
+
+// NEW routes
+import adminStudentRoute from "./routes/adminStudentRoute.js";
+import teacherRoute from "./routes/teacherRoute.js";
 
 dotenv.config();
 
@@ -20,6 +25,10 @@ app.use(express.json());
 // Routes
 app.use("/api/students", studentRoute);
 app.use("/api/results", resultRoute);
+
+// NEW admin routes
+app.use("/api/admin/students", adminStudentRoute);
+app.use("/api/teachers", teacherRoute);
 
 // Test route
 app.get("/", (req, res) => {
