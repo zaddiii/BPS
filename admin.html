@@ -70,70 +70,31 @@
       <div id="status"></div>
     </form>
   </div>
-</section><!-- ADD RESULT --><section id="results" class="section">
-  <h1>Add Result</h1>
-  <div class="form-card">
-    <form id="resultForm">
-      <div class="row">
-        <label>Student ID <input type="text" name="studentId" required></label>
-        <label>Subject <input type="text" name="subject" required></label>
-      </div>
-      <div class="row">
-        <label>Score <input type="number" name="score" required></label>
-        <label>Term
-          <select name="term">
-            <option>First Term</option>
-            <option>Second Term</option>
-            <option>Third Term</option>
-          </select>
-        </label>
-      </div>
-      <div class="row">
-        <label>Session <input type="text" name="session" placeholder="2024/2025"></label>
-      </div>
-      <button class="save-btn">Save Result</button>
-    </form>
-  </div>
-</section><!-- MANAGE STUDENTS --><section id="manage" class="section">
-  <h1>Manage Students</h1>
-  <div class="form-card">
-    <label style="font-weight:600; margin-bottom:10px; display:block;">Filter by Class</label>
-    <select id="classFilter" onchange="filterByClass()" style="padding:10px; width:100%; max-width:250px; border:1px solid #ccc; border-radius:6px; margin-bottom:20px;">
-      <option value="all">All Classes</option>
-      <option>Pre-KG</option>
-      <option>KG 1</option>
-      <option>KG 2</option>
-      <option>Primary 1</option>
-      <option>Primary 2</option>
-      <option>Primary 3</option>
-      <option>Primary 4</option>
-      <option>Primary 5</option>
-    </select>
-    <table style="width:100%; border-collapse: collapse;">
-      <thead>
-        <tr style="background:navy; color:white;">
-          <th style="padding:10px; border:1px solid #ddd;">Student ID</th>
-          <th style="padding:10px; border:1px solid #ddd;">Name</th>
-          <th style="padding:10px; border:1px solid #ddd;">Class</th>
-        </tr>
-      </thead>
-      <tbody id="studentsBody"></tbody>
-    </table>
-  </div>
-</section><!-- ADD TEACHER --><section id="addTeacher" class="section">
+<!-- ADD TEACHER -->
+<section id="addTeacher" class="section">
   <h1>Add Teacher</h1>
   <div class="form-card">
     <form id="teacherForm">
       <div class="row">
-        <label>Full Name <input type="text" name="teacherName" required></label>
-        <label>Teacher ID <input type="text" name="teacherId" required></label>
+        <label>Full Name <input type="text" name="fullName" required></label>
+        <label>Phone <input type="tel" name="phone" required></label>
       </div>
       <div class="row">
-        <label>Class(es) <input type="text" name="classes" placeholder="E.g. KG 1, Primary 2" required></label>
+        <label>Email <input type="email" name="email"></label>
+        <label>Qualification <input type="text" name="qualification"></label>
+      </div>
+      <div class="row">
+        <label>Subject Specialization <input type="text" name="subjectSpecialization" required></label>
+        <label>Class Teacher <input type="text" name="classTeacher"></label>
+      </div>
+      <div class="row">
+        <label>Years of Experience <input type="number" name="yearsOfExperience"></label>
+        <label>Joining Date <input type="date" name="joiningDate"></label>
       </div>
       <button class="save-btn" type="submit">Add Teacher</button>
     </form>
   </div>
+ </section>
 </section><!-- MANAGE TEACHERS --><section id="manageTeacher" class="section">
   <h1>Manage Teachers</h1>
   <div class="form-card">
@@ -355,33 +316,38 @@ document.getElementById('transferForm').addEventListener('submit', async e=>{
 // ============================
 // TEACHER: ADD
 // ============================
-document.getElementById("teacherForm").addEventListener("submit", async e => {
+document.getElementById('teacherForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const form = e.target;
 
   const data = {
-    fullName: form.teacherName.value,
-    teacherId: form.teacherId.value,
-    classes: form.classes.value
+    fullName: e.target.fullName.value,
+    phone: e.target.phone.value,
+    email: e.target.email.value,
+    qualification: e.target.qualification.value,
+    subjectSpecialization: e.target.subjectSpecialization.value,
+    classTeacher: e.target.classTeacher.value,
+    yearsOfExperience: e.target.yearsOfExperience.value,
+    joiningDate: e.target.joiningDate.value
   };
 
   try {
     const res = await fetch(`${API_URL}/api/teachers`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
 
     const result = await res.json();
-    if(result.success){
-      alert("Teacher added successfully!");
-      form.reset();
-      fetchTeachers();
+    if (result.success) {
+      alert('Teacher added successfully!');
+      e.target.reset();
+      fetchTeachers(); // refresh the teachers table
     } else {
-      alert("Error: " + (result.message || result.error));
+      alert('Error: ' + (result.message || 'Unknown error'));
     }
-  } catch(err){
-    alert("Failed to connect to server.");
+  } catch (err) {
+    console.error(err);
+    alert('Failed to connect to server.');
   }
 });
 
