@@ -14,12 +14,25 @@ import teacherRoute from "./routes/teacherRoute.js";
 dotenv.config();
 
 // Connect to MongoDB
-connectDB(); // initializes connection to BPS database
+connectDB();
 
 const app = express();
 
+// =======================
+// FIXED CORS CONFIG
+// =======================
+app.use(
+  cors({
+    origin: [
+      "https://zaddiii.github.io",
+      "https://zaddiii.github.io/BPS"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // Routes
