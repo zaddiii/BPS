@@ -781,6 +781,20 @@ function showSection(sectionId) {
     hamburger.classList.remove('active');
   }
 }
+
+
+function populateResultDropdowns(students) {
+  const select = document.getElementById("studentDropdown");
+  if (!select) return;
+
+  select.innerHTML = "";
+  students.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s._id;
+    opt.textContent = `${s.name} (${s.class})`;
+    select.appendChild(opt);
+  });
+}
 /* -------------------------
    HELPERS
    ------------------------- */
