@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Believers Praise Christian School</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #home {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 5%;
+  background-image: url('https://raw.githubusercontent.com/online-school-portal/BPS/dfe2f64a57e113dd5c9d4daf971117221e188015/bpsImg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: ;
+  position: relative;
+}
+
+    /* ===== GENERAL ===== */
+    * { box-sizing: border-box; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #fff;
+      color: #000;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; margin: 0; }
+    section { padding: 80px 10%; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0; width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 10%;
+      z-index: 1000;
+      transition: box-shadow 0.3s ease;
+      border-bottom: 1px solid #ccc;
+    }
+    .navbar.scrolled { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+    .navbar .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: navy;
+      white-space: nowrap;
+    }
+
+    /* Hamburger only */
+    .nav-links {
+      position: fixed;
+      top: 50px;
+      right: -200px;
+      width: 180px;
+      height: calc(100% - 50px);
+      background: #fff;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 20px;
+      gap: 15px;
+      transition: right 0.3s ease;
+      border-left: 1px solid #ccc;
+      display: flex;
+    }
+    .nav-links a {
+      color: navy;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      width: 100%;
+      text-align: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-links.active { right: 0; }
+
+    /* Hamburger icon */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+      z-index: 1100;
+    }
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background: navy;
+      transition: all 0.3s ease;
+    }
+    .hamburger.active div:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.active div:nth-child(2) { opacity: 0; }
+    .hamburger.active div:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 5%;
+    }
+    .hero h1 { font-size: clamp(1.5rem, 5vw, 2.5rem); margin-bottom: 10px; color: navy; }
+    .hero h2 { font-size: clamp(0.9rem, 3vw, 1.2rem); font-weight: 500; color: navy; margin-bottom: 15px; }
+    .hero p { font-size: clamp(0.85rem, 2.5vw, 1rem); color: #555; max-width: 600px; line-height: 1.6; }
+    .hero button { background: navy; border: none; color: #fff; padding: 12px 30px; font-size: 1rem; margin-top: 20px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+    .hero button:hover { background: #333; }
+
+    /* ===== ABOUT ===== */
+    .about { text-align: center; }
+    .about p { color: #333; font-size: 1rem; max-width: 800px; margin: 20px auto; line-height: 1.7; }
+    .profile-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid navy; margin: 20px 0; }
+
+    /* ===== CONTACT ===== */
+    .contact { text-align: center; padding-bottom: 80px; border-top: 1px solid #ccc; }
+    .contact h3 { font-size: 1.8rem; color: navy; margin-bottom: 20px; }
+    .contact p { color: #333; font-size: 1rem; }
+    .contact button { background: navy; color: #fff; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; transition: 0.3s; }
+    .contact button:hover { background: #333; }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.3rem; }
+      .hero h2 { font-size: 1rem; }
+      .hero p { font-size: 0.85rem; }
+      .navbar .logo { font-size: 1.2rem; }
+      .nav-links a { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="logo">Believers Praise School</div>
+    <div class="hamburger" id="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#result">Results</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section id="home" class="hero">
+    <h1>Believers Praise Christian School</h1>
+    <h2>Online Portal</h2>
+    <p>God First.</p>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="about">
+    <h3>About Us</h3>
+    <img id="profileImg" src="https://raw.githubusercontent.com/online-school-portal/BPS/732bb0bb009e5b67f37fdb2b3a2b77ee9d88405a/bps.jpg" alt="Hamazi" class="profile-img">
+      Welcome to Believers Praise Christian School, where learning and growth go hand in hand.
+      Our dedicated teachers guide students to reach their full potential.
+      We foster curiosity, creativity, and critical thinking in every classroom.
+      Beyond academics, we encourage sports, arts, and community involvement.
+      At Believers Praise Christian School, we prepare students to become confident, caring leaders.
+    </p>
+  </section>
+
+  <!-- ===== RESULTS SECTION ===== -->
+  <section id="result" class="py-20 bg-gray-50">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Student Result Checker</h2>
+
+      <form id="checkForm" class="space-y-5">
+          <div>
+              <label class="block font-semibold mb-1">Student ID</label>
+              <input type="text" id="studentId"
+                     class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300"
+                     placeholder="Enter Student ID" required />
+          </div>
+
+          <div>
+              <label class="block font-semibold mb-1">Term</label>
+              <select id="term"
+                      class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300">
+                  <option>First Term</option>
+                  <option>Second Term</option>
+                  <option>Third Term</option>
+              </select>
+          </div>
+
+          <div>
+              <label class="block font-semibold mb-1">Session</label>
+              <input type="text" id="session"
+                     placeholder="2024/2025"
+                     class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300"
+                     required />
+          </div>
+
+          <button type="submit"
+                  class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+              Check Result
+          </button>
+      </form>
+
+      <div id="resultBox" class="mt-8 hidden bg-gray-100 p-4 rounded-lg">
+    <h3 class="text-lg font-bold mb-2">Result Details</h3>
+    <table id="resultTable" class="w-full text-sm border-collapse hidden">
+        <thead>
+            <tr class="bg-blue-600 text-white">
+                <th class="border px-2 py-1">Subject</th>
+                <th class="border px-2 py-1">Test 1</th>
+                <th class="border px-2 py-1">Test 2</th>
+                <th class="border px-2 py-1">Exam</th>
+                <th class="border px-2 py-1">Total</th>
+                <th class="border px-2 py-1">Grade</th>
+            </tr>
+        </thead>
+        <tbody id="resultTableBody"></tbody>
+    </table>
+    <div id="studentInfo" class="mt-2 font-medium"></div>
+</div>
+
+      <!-- ===== TEACHER LOGIN PAGINATION ===== -->
+      <div class="mt-6 text-center">
+        <span>Not a student? </span>
+        <button id="teacherLoginBtn" class="text-blue-600 underline cursor-pointer hover:text-blue-800">Login here</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LOGIN POPUP ===== -->
+  <div id="loginPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded-xl w-80">
+      <h3 class="text-lg font-bold mb-4 text-center text-blue-700">Teacher Login</h3>
+      <input type="text" id="teacherId" placeholder="Enter Teacher ID"
+             class="w-full p-3 border rounded-lg mb-4 focus:ring focus:ring-blue-300">
+      <div class="flex justify-end gap-2">
+        <button id="loginCancel" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
+        <button id="loginSubmit" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Login</button>
+      </div>
+      <p id="loginError" class="text-red-600 mt-2 text-sm hidden">Incorrect ID</p>
+    </div>
+  </div>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="contact">
+    <h3>Contact Us</h3>
+    <p>Reach out to us via WhatsApp to learn more or ask questions.</p>
+    <a href="https://wa.me/2347034644748" target="_blank">
+      <button>Message on WhatsApp</button>
+    </a>
+  </section>
+
+  <script>
+    // Hamburger toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    });
+
+    // Smooth scroll and close menu when a nav link is clicked
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: 'smooth' });
+          navLinks.classList.remove('active');
+          hamburger.classList.remove('active');
+        }
+      });
+    });
+
+    // Navbar shadow on scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) navbar.classList.add('scrolled');
+      else navbar.classList.remove('scrolled');
+    });
+
+    // ===== Result Checker Script =====
+    const form = document.getElementById("checkForm");
+    const resultBox = document.getElementById("resultBox");
+    const resultOutput = document.getElementById("resultOutput");
+    const API_URL = "https://bps-qgmn.onrender.com";
+
+    form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const rollNo = document.getElementById("studentId").value;
+    const term = document.getElementById("term").value;
+    const session = document.getElementById("session").value;
+
+    try {
+        const res = await fetch(`${API_URL}/api/results/check`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rollNo, term, session })
+        });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+
+        if (!data.success || data.results.length === 0) {
+            resultBox.classList.remove("hidden");
+            document.getElementById("resultTable").classList.add("hidden");
+            document.getElementById("studentInfo").textContent = "No results found for this student.";
+            return;
+        }
+
+        const studentInfo = data.results[0];
+        document.getElementById("studentInfo").textContent =
+            `Student Name: ${studentInfo.studentName} | Class: ${studentInfo.studentClass} | Term: ${term} | Session: ${session}`;
+
+        const tbody = document.getElementById("resultTableBody");
+        tbody.innerHTML = ""; // Clear previous results
+
+        data.results.forEach(sub => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="border px-2 py-1">${sub.subject}</td>
+                <td class="border px-2 py-1">${sub.test1 || 0}</td>
+                <td class="border px-2 py-1">${sub.test2 || 0}</td>
+                <td class="border px-2 py-1">${sub.exam || 0}</td>
+                <td class="border px-2 py-1">${sub.total || 0}</td>
+                <td class="border px-2 py-1">${sub.grade || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        resultBox.classList.remove("hidden");
+        document.getElementById("resultTable").classList.remove("hidden");
+
+    } catch (err) {
+        console.error("Failed to fetch result:", err);
+        resultBox.classList.add("hidden");
+    }
+});
+
+    // ===== Teacher login popup =====
+    const teacherLoginBtn = document.getElementById('teacherLoginBtn');
+    const loginPopup = document.getElementById('loginPopup');
+    const loginCancel = document.getElementById('loginCancel');
+    const loginSubmit = document.getElementById('loginSubmit');
+    const teacherIdInput = document.getElementById('teacherId');
+    const loginError = document.getElementById('loginError');
+
+    teacherLoginBtn.addEventListener('click', () => {
+      loginPopup.classList.remove('hidden');
+      teacherIdInput.value = '';
+      loginError.classList.add('hidden');
+      teacherIdInput.focus();
+    });
+
+    loginCancel.addEventListener('click', () => {
+      loginPopup.classList.add('hidden');
+    });
+
+    loginSubmit.addEventListener('click', () => {
+      const enteredId = teacherIdInput.value.trim();
+      if (enteredId === '25533' || enteredId === '12345') {
+        window.location.href = 'admin.html';
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    loginPopup.addEventListener('click', (e) => {
+      if (e.target === loginPopup) loginPopup.classList.add('hidden');
+    });
+
+    teacherIdInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') loginSubmit.click();
+    });
+  </script>
+</body>
+</html>
