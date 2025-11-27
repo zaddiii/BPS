@@ -24,8 +24,8 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://zaddiii.github.io",
-      "https://zaddiii.github.io/BPS"
+      "https://online-school-portal.github.io",
+      "https://devhamazi.github.io/BPS"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
