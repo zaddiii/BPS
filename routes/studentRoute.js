@@ -1,14 +1,15 @@
-
 import express from "express";
 import { getDB } from "../config/db.js";
 
 const router = express.Router();
 
-// GET all students
+// GET all students (optionally filter by class)
 router.get("/", async (req, res) => {
   try {
     const db = getDB();
-    const students = await db.collection("students").find().toArray();
+    const className = req.query.class; // frontend sends ?class=ClassName
+    const query = className ? { className } : {};
+    const students = await db.collection("students").find(query).toArray();
     res.json(students);
   } catch (err) {
     res.status(500).json({ error: err.message });
