@@ -729,6 +729,30 @@ function setupRegistrationForm() {
   }
 }
 
+
+
+function showSection(sectionId) {
+  // hide all sections
+  document.querySelectorAll('.section').forEach(sec => {
+    sec.classList.remove('active');
+    sec.style.display = "none";
+  });
+
+  // show selected section
+  const target = document.getElementById(sectionId);
+  if (target) {
+    target.classList.add('active');
+    target.style.display = "block";
+  }
+
+  // close mobile menu when selecting a section
+  const navLinks = document.getElementById('navLinks');
+  const hamburger = document.getElementById('hamburger');
+  if (navLinks && hamburger) {
+    navLinks.classList.remove('active');
+    hamburger.classList.remove('active');
+  }
+}
 /* -------------------------
    HELPERS
    ------------------------- */
