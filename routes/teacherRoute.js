@@ -1,5 +1,6 @@
 import express from "express";
 import { getDB } from "../config/db.js";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
@@ -51,6 +52,26 @@ router.post("/", async (req, res) => {
     });
 
     res.status(201).json({ success: true, newTeacher });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ============================
+// DELETE teacher
+// ============================
+router.delete("/:id", async (req, res) => {
+  try {
+    const db = getDB();
+    const result = await db
+      .collection("teachers")
+      .deleteOne({ _id: new ObjectId(req.params.id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json({ success: true, message: "Teacher deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
