@@ -13,9 +13,10 @@ dotenv.config();
 
 const app = express();
 
+// CORS
 app.use(
   cors({
-    origin: ["*"],
+    origin: "*", // Allow all temporarily
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
   })
@@ -23,22 +24,29 @@ app.use(
 
 app.use(express.json());
 
-app.use("/api/students", studentRoute);
-app.use("/api/results", resultRoute);
-app.use("/api/admin/students", adminStudentRoute);
-app.use("/api/teachers", teacherRoute);
-app.use("/api/subjects", subjectRoute);
-
+// Simple root route
 app.get("/", (req, res) => res.send("Result System API Running..."));
 
-// ✅ Wrap server start inside async function
+// Start server only after MongoDB is connected
 const startServer = async () => {
   try {
-    await connectDB(); // Wait for MongoDB to connect
+    await connectDB(); // Wait for MongoDB connection
+    console.log("MongoDB connected successfully");
+
+    // Register routes **after DB is ready**
+    app.use("/api/students", studentRoute);
+    app.use("/api/results", resultRoute);
+    app.use("/api/admin/students", adminStudentRoute);
+    app.use("/api/teachers", teacherRoute);
+    app.use("/api/subjects", subjectRoute);
+
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT} and ready for requests`)
+    );
   } catch (err) {
     console.error("Failed to start server:", err);
+    process.exit(1); // Stop server if DB fails
   }
 };
 
