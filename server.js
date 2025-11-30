@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -10,6 +9,9 @@ import resultRoute from "./routes/resultRoute.js";
 // NEW routes
 import adminStudentRoute from "./routes/adminStudentRoute.js";
 import teacherRoute from "./routes/teacherRoute.js";
+
+// 👉 SUBJECT ROUTE (You forgot this before)
+import subjectRoute from "./routes/subjectRoute.js";
 
 dotenv.config();
 
@@ -42,6 +44,9 @@ app.use("/api/results", resultRoute);
 // NEW admin routes
 app.use("/api/admin/students", adminStudentRoute);
 app.use("/api/teachers", teacherRoute);
+
+// 👉 ADD THIS LINE FOR SUBJECTS
+app.use("/api/subjects", subjectRoute);
 
 // Test route
 app.get("/", (req, res) => {
