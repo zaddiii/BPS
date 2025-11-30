@@ -1,4 +1,3 @@
-
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
@@ -17,8 +16,8 @@ export const connectDB = async () => {
   }
 };
 
-// Function to get DB instance in routes
-export const getDB = () => {
+// FIXED: renamed to match subjectRoute import
+export const getDb = () => {
   if (!db) throw new Error("Database not connected");
   return db;
 };
