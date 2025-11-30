@@ -115,3 +115,5 @@ router.delete("/:id", async (req, res) => {
 });
 
 export default router;
+
+console.log("ROUTE HIT");
