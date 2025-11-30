@@ -224,8 +224,6 @@ async function deleteStudent(studentIdEncoded) {
    TEACHER CARDS (MANAGE)
 ------------------------- */
 
-let allTeachers = []; // cache for loaded teachers
-
 function setupTeacherManagement() {
   // -------------------------
   // ADD TEACHER
