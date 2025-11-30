@@ -222,17 +222,98 @@ async function deleteStudent(studentIdEncoded) {
 /* -------------------------
    TEACHER CARDS (MANAGE)
 ------------------------- */
-let allTeachers = []; // Cache for loaded teachers
+/* -------------------------
+   CONFIG
+------------------------- */
+const API_URL = (() => {
+  // Auto-detect backend URL
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:5000"; // Local backend
+  }
+  return "https://your-backend.onrender.com"; // Deployed backend
+})();
 
+/* -------------------------
+   GLOBALS
+------------------------- */
+let allTeachers = []; // Cache loaded teachers
+
+/* -------------------------
+   HELPER: ESCAPE HTML
+------------------------- */
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+}
+
+/* -------------------------
+   FETCH TEACHERS
+------------------------- */
+async function fetchTeachers() {
+  try {
+    const res = await fetch(`${API_URL}/api/teachers`);
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    allTeachers = await res.json();
+  } catch (err) {
+    console.error("fetchTeachers error:", err);
+    allTeachers = [];
+    alert("Failed to fetch teachers. Check backend and CORS settings.");
+  }
+}
+
+/* -------------------------
+   LOAD TEACHERS TO DOM
+------------------------- */
+async function loadTeachers() {
+  const container = document.getElementById("teachersContainer");
+  if (!container) return;
+  container.innerHTML = "<p>Loading...</p>";
+
+  try {
+    if (!allTeachers || allTeachers.length === 0) await fetchTeachers();
+
+    container.innerHTML = "";
+    if (!allTeachers || allTeachers.length === 0) {
+      container.innerHTML = "<p>No teachers found.</p>";
+      return;
+    }
+
+    allTeachers.forEach(teacher => {
+      const card = document.createElement("div");
+      card.className = "p-4 border rounded shadow bg-white mb-3";
+      card.innerHTML = `
+        <h3 class="text-lg font-bold mb-2">${escapeHtml(teacher.fullName || "")}</h3>
+        <p><strong>Phone:</strong> ${escapeHtml(teacher.phone || "-")}</p>
+        <p><strong>Email:</strong> ${escapeHtml(teacher.email || "-")}</p>
+        <p><strong>Qualification:</strong> ${escapeHtml(teacher.qualification || "-")}</p>
+        <p><strong>Subject:</strong> ${escapeHtml(teacher.subjectSpecialization || "-")}</p>
+        <p><strong>Class Teacher:</strong> ${escapeHtml(teacher.classTeacher || "-")}</p>
+        <p><strong>Years Experience:</strong> ${escapeHtml(teacher.yearsOfExperience || "-")}</p>
+        <p><strong>Joining Date:</strong> ${escapeHtml(teacher.joiningDate || "-")}</p>
+        <div class="flex gap-2 mt-3">
+          <button class="action-btn edit-btn" onclick="openEditTeacherModal('${encodeURIComponent(teacher._id)}')">Edit</button>
+          <button class="action-btn delete-btn" onclick="deleteTeacher('${encodeURIComponent(teacher._id)}')">Delete</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error("loadTeachers error:", err);
+    container.innerHTML = "<p>Failed to load teachers.</p>";
+  }
+}
+
+/* -------------------------
+   ADD TEACHER
+------------------------- */
 function setupTeacherManagement() {
-  // -------------------------
-  // ADD TEACHER
-  // -------------------------
   const addForm = document.getElementById("addTeacherForm");
   if (addForm) {
-    addForm.addEventListener("submit", async (e) => {
+    addForm.addEventListener("submit", async e => {
       e.preventDefault();
-
       const payload = {
         fullName: addForm.fullName.value,
         phone: addForm.phone.value,
@@ -248,39 +329,33 @@ function setupTeacherManagement() {
         const res = await fetch(`${API_URL}/api/teachers/add`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         });
-
         const result = await res.json();
 
         if (res.ok) {
           alert("Teacher added successfully!");
           addForm.reset();
           await loadTeachers();
-          document.getElementById("teachersSection")?.scrollIntoView({ behavior: "smooth" });
         } else {
-          alert(result.message || "Failed to add teacher");
+          alert(result.message || "Failed to add teacher.");
         }
       } catch (err) {
-        console.error(err);
-        alert("Failed to connect to server.");
+        console.error("Add teacher error:", err);
+        alert("Failed to connect to server. Check API_URL & backend.");
       }
     });
   }
 
-  // -------------------------
-  // EDIT TEACHER
-  // -------------------------
+  /* -------------------------
+     EDIT TEACHER
+  ------------------------- */
   const editForm = document.getElementById("editTeacherForm");
   if (editForm) {
-    editForm.addEventListener("submit", async (e) => {
+    editForm.addEventListener("submit", async e => {
       e.preventDefault();
-
-      const teacherId = editForm.teacherId?.value || editForm.querySelector('[name="teacherId"]')?.value;
-      if (!teacherId) {
-        alert("Missing teacher ID.");
-        return;
-      }
+      const teacherId = editForm.teacherId.value;
+      if (!teacherId) return alert("Missing teacher ID");
 
       const payload = {
         fullName: editForm.fullName.value,
@@ -297,11 +372,9 @@ function setupTeacherManagement() {
         const res = await fetch(`${API_URL}/api/teachers/${encodeURIComponent(teacherId)}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         });
-
         const result = await res.json();
-
         if (result.success) {
           alert("Teacher updated!");
           document.getElementById("editTeacherModal")?.classList.add("hidden");
@@ -310,33 +383,30 @@ function setupTeacherManagement() {
           alert(result.message || "Failed to update teacher.");
         }
       } catch (err) {
-        console.error(err);
+        console.error("Edit teacher error:", err);
         alert("Failed to connect to server.");
       }
     });
   }
 
-  // -------------------------
-  // CLOSE EDIT MODAL
-  // -------------------------
+  /* -------------------------
+     CLOSE EDIT MODAL
+  ------------------------- */
   document.getElementById("closeTeacherModal")?.addEventListener("click", () => {
     document.getElementById("editTeacherModal")?.classList.add("hidden");
   });
 }
 
-// -------------------------
-// DELETE TEACHER
-// -------------------------
+/* -------------------------
+   DELETE TEACHER
+------------------------- */
 async function deleteTeacher(teacherId) {
   if (!confirm("Are you sure you want to delete this teacher?")) return;
-
   try {
     const res = await fetch(`${API_URL}/api/teachers/${encodeURIComponent(teacherId)}`, {
-      method: "DELETE",
+      method: "DELETE"
     });
-
     const result = await res.json();
-
     if (result.success) {
       alert("Teacher deleted!");
       await loadTeachers();
@@ -344,14 +414,14 @@ async function deleteTeacher(teacherId) {
       alert(result.message || "Failed to delete teacher");
     }
   } catch (err) {
-    console.error(err);
+    console.error("Delete teacher error:", err);
     alert("Failed to connect to server.");
   }
 }
 
-// -------------------------
-// OPEN EDIT MODAL
-// -------------------------
+/* -------------------------
+   OPEN EDIT MODAL
+------------------------- */
 function openEditTeacherModal(teacherId) {
   const teacher = allTeachers.find(t => t._id === decodeURIComponent(teacherId));
   if (!teacher) return alert("Teacher not found");
@@ -372,81 +442,14 @@ function openEditTeacherModal(teacherId) {
   document.getElementById("editTeacherModal")?.classList.remove("hidden");
 }
 
-// -------------------------
-// LOAD TEACHERS
-// -------------------------
-async function fetchTeachers() {
-  try {
-    const res = await fetch(`${API_URL}/api/teachers`);
-    allTeachers = await res.json();
-  } catch (err) {
-    console.error("fetchTeachers error", err);
-    allTeachers = [];
-  }
-}
-
-async function loadTeachers() {
-  const container = document.getElementById("teachersContainer");
-  if (!container) return;
-  container.innerHTML = "<p>Loading...</p>";
-
-  try {
-    if (!allTeachers || allTeachers.length === 0) {
-      await fetchTeachers();
-    }
-
-    container.innerHTML = "";
-
-    if (!allTeachers || allTeachers.length === 0) {
-      container.innerHTML = "<p>No teachers found.</p>";
-      return;
-    }
-
-    allTeachers.forEach(teacher => {
-      const card = document.createElement("div");
-      card.className = "p-4 border rounded shadow bg-white mb-3";
-
-      card.innerHTML = `
-        <h3 class="text-lg font-bold mb-2">${escapeHtml(teacher.fullName || "")}</h3>
-        <p><strong>Phone:</strong> ${escapeHtml(teacher.phone || "-")}</p>
-        <p><strong>Email:</strong> ${escapeHtml(teacher.email || "-")}</p>
-        <p><strong>Qualification:</strong> ${escapeHtml(teacher.qualification || "-")}</p>
-        <p><strong>Subject:</strong> ${escapeHtml(teacher.subjectSpecialization || "-")}</p>
-        <p><strong>Class Teacher:</strong> ${escapeHtml(teacher.classTeacher || "-")}</p>
-        <p><strong>Years Experience:</strong> ${escapeHtml(teacher.yearsOfExperience || "-")}</p>
-        <p><strong>Joining Date:</strong> ${escapeHtml(teacher.joiningDate || "-")}</p>
-        <div class="flex gap-2 mt-3">
-          <button class="action-btn edit-btn" onclick="openEditTeacherModal('${encodeURIComponent(teacher._id)}')">Edit</button>
-          <button class="action-btn delete-btn" onclick="deleteTeacher('${encodeURIComponent(teacher._id)}')">Delete</button>
-        </div>
-      `;
-
-      container.appendChild(card);
-    });
-  } catch (err) {
-    console.error("loadTeachers error", err);
-    container.innerHTML = "<p>Failed to load teachers.</p>";
-  }
-}
-
-// -------------------------
-// SIMPLE HTML ESCAPE
-// -------------------------
-function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-}
-
-// -------------------------
-// INITIALIZE
-// -------------------------
+/* -------------------------
+   INITIALIZE
+------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
   setupTeacherManagement();
   loadTeachers();
 });
+
 /* -------------------------
    TRANSFER SECTION
    ------------------------- */
