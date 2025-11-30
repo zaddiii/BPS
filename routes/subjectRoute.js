@@ -52,7 +52,6 @@ router.get("/class/:className", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   try {
     const db = getDB();
-
     const result = await db
       .collection("subjects")
       .deleteOne({ _id: new ObjectId(req.params.id) });
@@ -64,6 +63,20 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(200).json({ message: "Subject deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+// ✅ Delete all subjects for a class
+router.delete("/class/:className", async (req, res) => {
+  try {
+    const db = getDB();
+    const result = await db
+      .collection("subjects")
+      .deleteMany({ class: req.params.className });
+
+    res.status(200).json({ success: true, deletedCount: result.deletedCount });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
