@@ -741,26 +741,9 @@ loginCancel.addEventListener('click', () => {
   loginPopup.classList.add('hidden');
 });
 
+
 loginSubmit.addEventListener('click', async () => {
-  const enteredId = teacherIdInput.value.trim();
-  loginError.classList.add('hidden');
-
-  if (!enteredId) {
-    loginError.textContent = "Enter an ID";
-    loginError.classList.remove('hidden');
-    return;
-  }
-
-  // ========= ADMIN LOGIN =========
-  const ADMIN_IDS = ['25533', '12345'];
-  if (ADMIN_IDS.includes(enteredId)) {
-    window.location.href = 'admin.html';
-    return;
-  }
-
-  // ========= TEACHER LOGIN =========
-  loginSubmit.addEventListener('click', async () => {
-  const enteredEmail = teacherIdInput.value.trim(); // Now email input
+  const enteredEmail = teacherIdInput.value.trim();
   loginError.classList.add('hidden');
 
   if (!enteredEmail) {
@@ -769,10 +752,18 @@ loginSubmit.addEventListener('click', async () => {
     return;
   }
 
+  // ========= ADMIN LOGIN =========
+  const ADMIN_IDS = ['25533', '12345'];
+  if (ADMIN_IDS.includes(enteredEmail)) {
+    window.location.href = 'admin.html';
+    return;
+  }
+
+  // ========= TEACHER LOGIN (Supabase Magic Link) =========
   const { error } = await supabaseClient.auth.signInWithOtp({
     email: enteredEmail,
     options: {
-      emailRedirectTo: "https://online-school-portal.github.io/BPS//teacher.html"
+      emailRedirectTo: "https://online-school-portal.github.io/BPS/teacher.html"
     }
   });
 
